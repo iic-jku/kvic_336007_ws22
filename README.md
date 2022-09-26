@@ -1,2 +1,3 @@
-# kvic_336.007_ws22
-Course material for 336.007 (Prof. Pretl) in WS22 at JKU
+# KV Design of Integrated Circuits (336.007) in WS22/23
+
+Course material this course is stored here. (c) 2022 Harald Pretl, IIC, JKU
