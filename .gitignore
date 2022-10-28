@@ -1,0 +1,8 @@
+
+.DS_Store
+*.pyc
+py/AudioDAC.wav
+py/AUDIODAC_PY_TB
+py/audiodac_tb.vcd
+py/audiodac_test_data.txt
+py/verilog_bin_out.txt
