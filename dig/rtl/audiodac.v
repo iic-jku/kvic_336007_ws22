@@ -67,6 +67,7 @@ module audiodac (
 	input		[4:0]	tst_sinegen_step_i
 );
 	
+	// optional parameters for sine generator
 	parameter SINE_GENERATOR_AMPL = 0.5;
 	parameter SINE_GENERATOR_LUT_SIZE = 6;
 	
@@ -104,6 +105,8 @@ module audiodac (
 		);
 
 	iic_sinegen
+		// this module uses parameters, if your implementation does not use params
+		// then delete the following line:
 		#(16, SINE_GENERATOR_LUT_SIZE, SINE_GENERATOR_AMPL)
 		sinegen0 (
 			.data_o(audio_sinegen),
