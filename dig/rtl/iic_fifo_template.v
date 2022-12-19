@@ -15,7 +15,7 @@
  *								FIFO then the last datum will be output
  *
  *		fifo_outdata_o		... output data
- *		fifo_outdata_rd_o	... the next output datum is selected (if FIFO is not empty)
+ *		fifo_outdata_rd_i	... the next output datum is selected (if FIFO is not empty)
  *
  *		rst_n_i				... reset (low active)
  *		clk_i				... clock of FIFO
