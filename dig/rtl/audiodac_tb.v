@@ -19,9 +19,9 @@
 
 module audiodac_tb;
 
-	localparam SIM_MODE = 2;
+	localparam SIM_MODE = 0;
 	localparam SIM_OSR = 2;
-	localparam SIM_VOLUME = 15;
+	localparam SIM_VOLUME = 0;
 
 	// housekeeping for getting data in
 	`ifdef SIM_LONG

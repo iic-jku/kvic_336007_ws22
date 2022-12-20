@@ -4,5 +4,3 @@
 ../dig/rtl/iic_sinegen.v
 ../dig/rtl/iic_dsmod.v
 ../dig/rtl/audiodac.v
-
-
