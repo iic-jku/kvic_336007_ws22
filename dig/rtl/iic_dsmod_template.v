@@ -14,9 +14,9 @@
  *		clk_i			... clock of ds-modulator (must be OSR * input_data_rate),
  *							output bitstream rate = OSR * input_data_rate
  *
- *		mode_i			... select order of modulator (0 = 1st, 1 = 2nd)
+ *		mode_i			... select order of modulator (0 = 1st, 1 = 2nd [optional])
  *		scale_i			... scaling (attenuation) of input data in -6dB steps
- *							(0 = 0dB, 1 = -6dB, 2 = -12dB, ..., 15 = off)
+ *							(0 = 0dB, 1 = -6dB, 2 = -12dB, ..., 15 = off) [optional]
  *		osr_i			... oversampling ratio (OSR), 0=32/1=64/2=128/3=256 is supported
  */
 

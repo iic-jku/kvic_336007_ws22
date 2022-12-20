@@ -21,7 +21,7 @@
  *		clk_i				... clock of FIFO
  *
  *		tst_fifo_loop_i		... enables a test mode where the data in the FIFO is looped
- *								at the output
+ *								at the output [optional]
  */
 
 `default_nettype none

@@ -4,6 +4,8 @@ Created on Thu Oct 13 08:45:39 2022
 
 @author: Ratschenberger
 
+Update 2022-12-20 Pretl: Add sim control for VCD creation
+
 Class to handle the simulation settings for the audiodac_python_tb
 
 """
@@ -28,6 +30,7 @@ class AudioDACSimVals:
             SimParam.append(self.__defStr("SIM_OSR",  self.SIM_OSR))
             SimParam.append(self.__defStr("SIM_VOLUME",  self.SIM_VOLUME))
             SimParam.append(self.__defStr("SIM_DATA_SAMPLES", len(self.SIM_DATA)))
+            SimParam.append(self.__defStr("SIM_NO_VCD", 1))
             
             if os.path.exists(directory + "audiodac_simParam.v"):
                 os.remove(directory + "audiodac_simParam.v")

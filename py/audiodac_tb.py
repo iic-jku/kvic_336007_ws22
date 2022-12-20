@@ -31,18 +31,18 @@ import matplotlib.pyplot as plt
 import AudioDACSimVals as simvals
 import AudioDACSimResults as simresults
 
-fs = 44100  #Input sampling rate  
+fs = 44100  # Input sampling rate  
     
-BW = 16     #Bitwidth
+BW = 16     # Bitwidth
 
-#Request the simulation parameters
+# Request the simulation parameters
 
-#Set the Oversampling Rate (OSR)
+# Set the Oversampling Rate (OSR)
 OSR = int(input("SIM_OSR: (32/64/128/256) "))
 if OSR not in [32,64,128,256]:
     raise ValueError("OSR {} not supported!".format(OSR))
  
-#Convert the entered OSR in the desired range of the AUDIODAC
+# Convert the entered OSR in the desired range of the AUDIODAC
 SIM_OSR = 0
 if OSR == 64:
     SIM_OSR = 1
@@ -51,40 +51,40 @@ elif OSR == 128:
 elif OSR == 256:
     SIM_OSR = 3
 
-#Set the mode of the AUDIODAC
-    #Mode 0 => 1st order DSMOD
-    #Mode 1 => 2nd order DSMOD
+# Set the mode of the AUDIODAC
+    # Mode 0 => 1st order DSMOD
+    # Mode 1 => 2nd order DSMOD
 SIM_MODE = int(input("SIM_MODE: (0/1) "))
 if SIM_MODE not in [0,1]:
     raise ValueError("SIM_MODE {} not supported!".format(SIM_MODE))
 
-#Set the volumne
+# Set the volumne
 SIM_VOLUME = int(input("SIM_VOLUME: (0 = 0dB, 1 = -6dB , 15 = off) "))
 if SIM_VOLUME not in [_ for _ in range(16)]:
     raise ValueError("SIM_VOLUME {} not supported!".format(SIM_VOLUME))
 
 
-#Set the desired test set
+# Set the desired test set
 TestSet = int(input("""Which testset?
-         (1) Filtered WGN 
+         (1) Filtered WGN (white Gaussian noise)
          (2) Sine (10kHz) 
          (3) Zeros
-         (4) Sound
+         (4) Sound (bell)
     Your selection: """))
                      
 if TestSet not in [1,2,3, 4]:
     raise ValueError("Testset not supported!")
 
-#If the test set isn't the sound, ask for the number of simulated samples
+# If the test set isn't the sound, ask for the number of simulated samples
 if TestSet not in [4]:  
     nSamples = int(input("Number of samples ([44,441000]): "))
-    #Set a lower and upper bound
-        #Lower bound to prevent to less output samples
-        #Upper bound to prevent to long simulation 
+    # Set a lower and upper bound
+        # Lower bound to prevent to less output samples
+        # Upper bound to prevent to long simulation 
     if nSamples < 44 or nSamples > 10*44100: 
         raise ValueError("Number of samples not supported!")
 
-#Set the input data
+# Set the input data
 if TestSet == 1:
     test_data = np.random.randint(-2**(BW-1), 2**(BW-1)-1,nSamples)
     lowpass = signal.firwin(100, fs/4, fs=fs)
@@ -94,15 +94,15 @@ elif TestSet == 2:
 elif TestSet == 3:
     test_data = 0*np.arange(nSamples)
 elif TestSet == 4:
+    os.system("rm -f AudioDAC.wav")
     sound_sample_rate, test_data = wavfile.read("Bell.wav")
     nSamples = len(test_data)
-  
-
-#Calc. the spectrum of the test data
+ 
+# Calc. the spectrum of the test data
 freq_test_data = np.fft.fft(test_data, norm="forward")
 f = np.fft.fftfreq(freq_test_data.size, 1/fs)
 
-#Plot the test data in time domain
+# Plot the test data in time domain
 fig, ax = plt.subplots()
 fig.suptitle(r'Test data')
 ax.plot(test_data, 'b')
@@ -111,7 +111,7 @@ ax.set_ylabel(r'$x_{Test}[n]$')
 ax.grid(True)
 plt.draw()
 
-#Plot the spectrum of the test data
+# Plot the spectrum of the test data
 fig, ax = plt.subplots()
 fig.suptitle(r'Spectrum of the test data')
 x = np.fft.fftshift(f)
@@ -122,31 +122,33 @@ ax.set_ylabel(r'$\mid \mathrm{fft}\left(x_{Test}[n]\right) \mid$ ')
 ax.grid(True)
 plt.draw()
 
-#Setup the simulation values
+# Setup the simulation values
 mySimVals = simvals.AudioDACSimVals(SIM_MODE, SIM_OSR, SIM_VOLUME, test_data)
 
-#Generate the necessary files for the sim
+# Generate the necessary files for the sim
 mySimVals.genSimFiles()
 
-#Run the verilog simulation  
+# Run the verilog simulation (remove old compiled TB and results file first) 
+os.system("rm -f AUDIODAC_PY_TB")
+os.system("rm -f verilog_bin_out.txt")
 os.system("iverilog -g 2005 -o AUDIODAC_PY_TB -c file_list.txt")
 os.system("vvp AUDIODAC_PY_TB")
 
-#Set the file name of the simulation result
+# Set the file name of the simulation result
 mySimResults = simresults.AudioDACSimResults("verilog_bin_out.txt")
 
-#Read the simulation result
+# Read the simulation result
 data = mySimResults.getSIM_Result()
 
-data = (data)*2-1 #Merge the poitive and negative AUDIODAC output
+data = (data)*2-1       # Merge the poitive and negative AUDIODAC output
 
-data = data*2**(BW-1) #Scale the data to input range
+data = data*2**(BW-1)   # Scale the data to input range
 
-#Calc. the spectrum of the AUDIODAC output stream
+# Calc. the spectrum of the AUDIODAC output stream
 freq_data = np.fft.fft(data, norm="forward")
 f = np.fft.fftfreq(freq_data.size,d=1/(fs*OSR))
 
-#Plot the spectrum of the output data
+# Plot the spectrum of the output data
 fig, ax = plt.subplots()
 fig.suptitle(r'Spectrum of the output data')
 x = np.fft.fftshift(f)
@@ -157,12 +159,12 @@ ax.set_ylabel(r'$\mid \mathrm{fft}\left(x_{out}[n]\right) \mid$')
 ax.grid(True)
 plt.draw()
 
-#Get the output spectrum in the range 0 to fs/2
+# Get the output spectrum in the range 0 to fs/2
 indx_fs = round(len(freq_data)/(OSR*2))
 freq_data2 = freq_data[0:indx_fs-1]
 f = f[0:indx_fs-1]
 
-#Plot the output spectrum in the range 0 to fs/2
+# Plot the output spectrum in the range 0 to fs/2
 fig, ax = plt.subplots()
 fig.suptitle(r'Zoomed spectrum of the output data')
 x = f
@@ -173,24 +175,21 @@ ax.set_ylabel(r'$\mid \mathrm{fft}\left(x_{out}[n]\right) \mid$')
 ax.grid(True)
 plt.draw()
 
-
-#If the test set was the sound file
+# If the test set was the sound file
 if TestSet == 4:
-    
-    
-    #Resample the AUDIODAC output stream to fs by using Fourier method
+    # Resample the AUDIODAC output stream to fs by using Fourier method
     nSamples = round(len(data)/OSR)
     data = signal.resample(data,int(nSamples))
     
-    #Write the output to a .wav file
+    # Write the output to a .wav file
     wavfile.write("AudioDAC.wav",fs, data.astype(np.int16))
     
-    #Plot the waveform 
+    # Plot the waveform 
     fig, ax = plt.subplots()
     fig.suptitle(r'Waveform of the output data')
     ax.plot(data)
     ax.grid(True)
     plt.draw()
 
-#Show all figures at the end  
+# Show all figures at the end  
 plt.show()

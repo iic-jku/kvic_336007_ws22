@@ -130,9 +130,11 @@ module audiodac_python_tb;
 		$display("------------------------------");
 
 		$readmemh("audiodac_test_data.txt", DATA_IN);
-		
-		$dumpfile("audiodac_tb.vcd");
-		$dumpvars;
+
+		`ifndef SIM_NO_VCD	
+			$dumpfile("audiodac_tb.vcd");
+			$dumpvars;
+		`endif
 			
 		// de-assert reset
 		#5 RESET_N = 1'b1;

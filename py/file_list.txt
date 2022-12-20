@@ -1,7 +1,7 @@
 ../dig/rtl/audiodac_python_tb.v
 ../dig/rtl/audiodac_simParam.v
 ../dig/rtl/iic_fifo.v
-../dig/rtl/iic_sinegen_simple.v
+../dig/rtl/iic_sinegen.v
 ../dig/rtl/iic_dsmod.v
 ../dig/rtl/audiodac.v
 
