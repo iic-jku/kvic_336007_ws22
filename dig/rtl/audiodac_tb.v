@@ -45,7 +45,7 @@ module audiodac_tb;
 	reg 			RESET_N = 1'b0;
 	reg 			CLK = 1'b0;
 	reg				TST_FIFO_LOOP = 1'b0;
-	reg				TST_SINEGEN_EN = 1'b1;
+	reg				TST_SINEGEN_EN = 1'b0;
 	reg		[4:0]	TST_SINEGEN_STEP = 5'd2;
 
     // outputs
