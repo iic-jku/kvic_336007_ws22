@@ -28,7 +28,7 @@ module audiodac_python_tb;
 	// large memory to hold the audio
 	reg signed [15:0]	DATA_IN[0:DATA_SAMPLES-1];
 	// output results written to file
-	reg 				DATA_OUT[0:(DATA_SAMPLES*(32*2^SIM_OSR)-1)]; 
+	reg 				DATA_OUT[0:(DATA_SAMPLES*(32*(2**SIM_OSR))-1)]; 
 	
 	integer 			DATA_IN_CTR = 0;
 	integer 			DATA_OUT_CTR = 0;
@@ -84,18 +84,20 @@ module audiodac_python_tb;
 		if (!DATA_RDY && !FIFO_FULL && !FIFO_ACK && !WAIT_FOR_EMPTY && RESET_N) begin
 			
 			DATA <= DATA_IN[DATA_IN_CTR];
-			DATA_IN_CTR = DATA_IN_CTR + 1;
+			DATA_IN_CTR = DATA_IN_CTR < DATA_SAMPLES ? DATA_IN_CTR + 1 : DATA_IN_CTR;
 
 			// signal to FIFO that data is ready
 			DATA_RDY <= 1'b1;
 
-			// no more input data left? write result and exit
-			if (DATA_IN_CTR == DATA_SAMPLES) begin
-				$writememh("verilog_bin_out.txt", DATA_OUT);
-				$finish;
-			end
+			
 		end
 
+		// no more input data left and fifo empty? write result and exit
+		if (DATA_IN_CTR == DATA_SAMPLES && FIFO_EMPTY) begin
+			$writememh("verilog_bin_out.txt", DATA_OUT);
+			$finish;
+		end
+		
 		// de-assert data_rdy when data transfer ack'd by FIFO
 		if (FIFO_ACK) DATA_RDY <= 1'b0;
 
